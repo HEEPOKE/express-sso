@@ -12,16 +12,45 @@ enum Role {
   ADMIN
 }
 
+enum Provider {
+  GOOGLE
+  LOCAL
+}
+
+model Account {
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
+  users     User[]
+  sessions  Session[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
 model User {
-  id           Int      @id @default(autoincrement())
-  googleId     String?  @unique
-  email        String   @unique
-  password     String
-  firstName    String?
-  lastName     String?
-  userName     String?
-  avatarUrl    String?
-  role         Role     @default(USER)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
+  password  String?
+  userName  String?
+  role      Role      @default(USER)
+  provider  Provider  @default(GOOGLE)
+  googleId  String?
+  firstName String?
+  lastName  String?
+  photo     String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  account   Account   @relation(fields: [accountId], references: [id])
+  accountId Int
+  Session   Session[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  account   Account  @relation(fields: [accountId], references: [id])
+  accountId Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

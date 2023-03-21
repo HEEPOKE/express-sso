@@ -3,6 +3,7 @@ import * as dotenv from "dotenv";
 dotenv.config();
 
 const {
+  BASE_URL,
   PORT,
   MY_SECRET_KEY,
   MY_REFRESH_KEY,
@@ -12,6 +13,7 @@ const {
 } = process.env;
 
 const config = {
+  BASE_URL,
   PORT,
   MY_SECRET_KEY,
   MY_REFRESH_KEY,
