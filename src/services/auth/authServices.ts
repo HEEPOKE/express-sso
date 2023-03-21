@@ -6,7 +6,7 @@ import userCommon from "../../common/userCommon";
 import LoginRequest from "../../models/Request/auth/LoginRequest";
 import LoginResponse from "../../models/Response/auth/LoginResponse";
 
-async function register(email: string, password: string, userName: string) {
+async function Register(email: string, password: string, userName: string) {
   const existingUser = await userCommon.findUserByEmail(email);
 
   if (existingUser) {
@@ -21,7 +21,7 @@ async function register(email: string, password: string, userName: string) {
   return user;
 }
 
-async function login(credentials: LoginRequest): Promise<LoginResponse> {
+async function Login(credentials: LoginRequest): Promise<LoginResponse> {
   const { email, password } = credentials;
   const user = await userCommon.findUserByEmail(email);
 
@@ -42,14 +42,14 @@ async function login(credentials: LoginRequest): Promise<LoginResponse> {
   return { token };
 }
 
-async function logout(userId: number): Promise<void> {
+async function Logout(userId: number): Promise<void> {
   // Implement logout functionality here, such as revoking the user's token or session
 }
 
 const authService = {
-  register,
-  login,
-  logout,
+  Register,
+  Login,
+  Logout,
 };
 
 export default authService;
