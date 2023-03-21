@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import * as bodyParser from "body-parser";
+import router from "../routes";
 
 export default function server() {
   const app = express();
@@ -10,7 +11,7 @@ export default function server() {
   app.use(helmet());
   app.use(bodyParser.json());
 
-//   app.use("/api", router);
+  app.use("/api", router);
 
   return app;
 }
