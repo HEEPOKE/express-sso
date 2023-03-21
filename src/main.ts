@@ -1,12 +1,10 @@
-import express from 'express';
-import { Request, Response } from 'express';
+import server from "./server";
+import config from "./config/config";
 
-const app = express();
+const app = server();
 
-app.get('/', (req: Request, res: Response) => {
-  res.send('Application works!');
-});
+const port = config.PORT || 6476;
 
-app.listen(3000, () => {
-  console.log('Application started on port 3000!');
+app.listen(port, () => {
+  console.log(`http://localhost:${port}`);
 });
