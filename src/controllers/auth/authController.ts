@@ -25,13 +25,18 @@ async function Login(req: Request, res: Response) {
 }
 
 async function Logout(req: Request, res: Response) {
-  try {
-    const userId: number = parseInt(req.params.userId);
-    await authServices.Logout(userId);
-    res.status(200).json({ message: "User logged out successfully" });
-  } catch (error: any) {
-    res.status(400).json({ message: error.message });
-  }
+    try {
+        const token = req.headers.authorization?.split(" ")[1] || "";
+    
+        if (!token) {
+          throw new Error("Token is required");
+        }
+    
+        await authServices.Logout(token);
+        res.status(200).json({ message: "User logged out successfully" });
+      } catch (error: any) {
+        res.status(400).json({ message: error.message });
+      }
 }
 
 const authController = {
