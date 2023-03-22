@@ -31,24 +31,30 @@ function configurePassport() {
   });
 
   passport.use(
-    new LocalStrategy(async (email: string, password, done) => {
-      try {
-        const user = await prisma.user.findUnique({ where: { email } });
+    new LocalStrategy(
+      {
+        usernameField: "email",
+        passwordField: "password",
+      },
+      async (email: string, password: string, done) => {
+        try {
+          const user = await prisma.user.findUnique({ where: { email } });
 
-        if (!user) {
-          return done(null, false, { message: "Incorrect email." });
+          if (!user) {
+            return done(null, false, { message: "Incorrect email." });
+          }
+
+          const validPassword = await bcrypt.compare(password, user.password!);
+          if (!validPassword) {
+            return done(null, false, { message: "Incorrect password." });
+          }
+
+          return done(null, user);
+        } catch (err) {
+          return done(err);
         }
-
-        const validPassword = await bcrypt.compare(password, user.password);
-        if (!validPassword) {
-          return done(null, false, { message: "Incorrect password." });
-        }
-
-        return done(null, user);
-      } catch (err) {
-        return done(err);
       }
-    })
+    )
   );
 
   passport.use(
@@ -88,25 +94,18 @@ function configurePassport() {
   );
 
   passport.serializeUser((user: any, done) => {
-    done(null, user.id);
+    done(null, user.id!);
   });
 
   passport.deserializeUser(async (id: number, done) => {
     try {
-      const user = await prisma.user.findUnique({
-        where: { id: id },
-      });
-      done(null, user);
+      const user = await prisma.user.findUnique({ where: { id } });
+      done(null, user!);
     } catch (err) {
       done(err);
     }
   });
 }
-
-passport.deserializeUser(async (id, done) => {
-  const user = await prisma.user.findUnique({ where: { id: Number(id) } });
-  done(null, user);
-});
 
 const passportConfig = {
   configureMiddleware,
