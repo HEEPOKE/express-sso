@@ -13,7 +13,7 @@ function configureMiddleware(app: any) {
   app.use(bodyParser.json());
   app.use(
     session({
-      secret: config.SESSION_SECRET || "your-session-secret",
+      secret: config.SESSION_SECRET || "",
       resave: false,
       saveUninitialized: false,
     })
