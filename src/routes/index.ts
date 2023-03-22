@@ -30,10 +30,7 @@ authRoutes.get("/success", (req, res) => {
   }
 });
 
-// app.post('/login', passport.authenticate('local'), (req, res) => {
-//   const token = generateToken(req.user.id);
-//   res.json({ token });
-// });
+authRoutes.post('/login', passport.authenticate('local'), authController.Login);
 
 // app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 

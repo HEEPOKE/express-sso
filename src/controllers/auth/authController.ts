@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import LoginRequest from "../../models/Request/auth/LoginRequest";
 import authServices from "../../services/auth/authServices";
 
 async function Register(req: Request, res: Response) {
@@ -13,11 +14,15 @@ async function Register(req: Request, res: Response) {
 
 async function Login(req: Request, res: Response) {
   try {
-    const credentials = {
-      email: req.body.email,
-      password: req.body.password,
-    };
-    const response = await authServices.Login(credentials);
+    const user = req.user as LoginRequest;
+    const id = user.id;
+
+    if (!id) {
+      res.status(400).json({ message: 'User ID is missing' });
+      return;
+    }
+
+    const response = await authServices.Login(id);
     res.status(200).json(response);
   } catch (error: any) {
     res.status(400).json({ message: error.message });

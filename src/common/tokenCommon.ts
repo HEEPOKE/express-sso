@@ -3,7 +3,7 @@ import config from "../config/config";
 
 const JWT_SECRET = config.MY_SECRET_KEY!;
 
-function generateToken(payload: any, expiresIn: string | number = "1d") {
+function generateToken(payload: any, expiresIn: string) {
   return jwt.sign(payload, JWT_SECRET, { expiresIn });
 }
 
