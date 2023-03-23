@@ -27,17 +27,17 @@ model Account {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  email     String    @unique @db.VarChar(255)
-  password  String?   @db.VarChar(255)
-  name      String?   @db.VarChar(255)
-  role      Role      @default(USER)
-  provider  Provider  @default(GOOGLE)
-  googleId  String?   @unique @db.VarChar(255)
-  firstName String?   @db.VarChar(255)
-  lastName  String?   @db.VarChar(255)
-  photo     String?   @db.VarChar(255)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  accounts  Account[]
+  id          Int       @id @default(autoincrement())
+  email       String    @unique @db.VarChar(255)
+  password    String?   @db.VarChar(255)
+  displayName String?   @db.VarChar(255)
+  role        Role      @default(USER)
+  provider    Provider  @default(GOOGLE)
+  googleId    String?   @unique @db.VarChar(255)
+  firstName   String?   @db.VarChar(255)
+  lastName    String?   @db.VarChar(255)
+  photo       String?   @db.VarChar(255)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  accounts    Account[]
 }

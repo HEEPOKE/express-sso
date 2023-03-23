@@ -2,19 +2,16 @@ import express from "express";
 import passport from "passport";
 import validateToken from "../middleware/validateToken.middleware";
 import authController from "../controllers/auth/authController";
+import ssoController from "src/controllers/sso/ssoController";
 
 const router = express.Router();
 const authRoutes = express.Router();
 
-authRoutes.post("/login", authController.Login);
+authRoutes.post('/login', passport.authenticate('local'), authController.Login);
 authRoutes.post("/register", authController.Register);
 authRoutes.get("/logout", validateToken, authController.Logout);
-authRoutes.get(
-  "/google",
-  passport.authenticate("google", {
-    scope: ["profile", "email"],
-  })
-);
+
+authRoutes.get("/google", ssoController.googleAuth);
 authRoutes.get(
   "/google/callback",
   passport.authenticate("google", { failureRedirect: "/login" }),
@@ -30,7 +27,6 @@ authRoutes.get("/success", (req, res) => {
   }
 });
 
-authRoutes.post('/login', passport.authenticate('local'), authController.Login);
 
 // app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 

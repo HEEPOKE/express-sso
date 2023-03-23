@@ -1,5 +1,4 @@
 import cors from "cors";
-import bcrypt from "bcrypt";
 import helmet from "helmet";
 import passport from "passport";
 import session from "express-session";
@@ -8,6 +7,8 @@ import { Strategy as LocalStrategy } from "passport-local";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import config from "./config";
 import prisma from "../prisma";
+import authService from "../services/auth/authServices";
+import ssoServices from "../services/sso/ssoServices";
 
 function configureMiddleware(app: any) {
   app.use(cors({ credentials: true }));
@@ -37,22 +38,8 @@ function configurePassport() {
         passwordField: "password",
       },
       async (email: string, password: string, done) => {
-        try {
-          const user = await prisma.user.findUnique({ where: { email } });
-
-          if (!user) {
-            return done(null, false, { message: "Incorrect email." });
-          }
-
-          const validPassword = await bcrypt.compare(password, user.password!);
-          if (!validPassword) {
-            return done(null, false, { message: "Incorrect password." });
-          }
-
-          return done(null, user);
-        } catch (err) {
-          return done(err);
-        }
+        const [err, user, info] = await authService.handleLocalAuth(email, password);
+        done(err, user, info);
       }
     )
   );
@@ -71,21 +58,12 @@ function configurePassport() {
         done: any
       ) => {
         try {
-          let user = await prisma.user.findUnique({
-            where: { googleId: profile.id },
-          });
-
-          if (!user) {
-            user = await prisma.user.create({
-              data: {
-                googleId: profile.id,
-                email: profile.emails[0].value,
-                name: profile.displayName,
-              },
-            });
-          }
-
-          return done(null, user);
+          const user = await ssoServices.handleGoogleAuth(
+            _accessToken,
+            _refreshToken,
+            profile
+          );
+          done(null, user);
         } catch (err) {
           return done(err);
         }

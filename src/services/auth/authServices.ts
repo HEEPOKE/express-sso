@@ -5,8 +5,9 @@ import prisma from "../../prisma";
 import tokenCommon from "../../common/tokenCommon";
 import userCommon from "../../common/userCommon";
 import LoginResponse from "../../models/Response/auth/LoginResponse";
+import UserRequest from "../../models/Request/UserRequest";
 
-async function Register(email: string, password: string, name: string) {
+async function Register(email: string, password: string, displayName: string) {
   const existingUser = await userCommon.findUserByEmail(email);
 
   if (existingUser) {
@@ -15,7 +16,7 @@ async function Register(email: string, password: string, name: string) {
 
   const hashedPassword = await bcrypt.hash(password, 10);
   const user = await prisma.user.create({
-    data: { email, password: hashedPassword, name, googleId: "" },
+    data: { email, password: hashedPassword, displayName, googleId: "" },
   });
 
   return user;
@@ -38,10 +39,45 @@ async function Logout(token: string): Promise<void> {
   }
 }
 
+async function handleLocalAuth(
+  email: string,
+  password: string
+): Promise<[Error | null, UserRequest | false, { message: string }?]> {
+  try {
+    const user = await prisma.user.findUnique({ where: { email } });
+
+    if (!user) {
+      return [null, false, { message: "Incorrect email." }];
+    }
+
+    const validPassword = await bcrypt.compare(password, user.password!);
+    if (!validPassword) {
+      return [null, false, { message: "Incorrect password." }];
+    }
+
+    const userRequest: UserRequest = {
+      id: user.id,
+      email: user.email,
+      displayName: user.displayName!,
+      googleId: user.googleId!,
+      password: user.password!,
+    };
+
+    return [null, userRequest];
+  } catch (err) {
+    return [err as Error, false] as [
+      Error | null,
+      UserRequest | false,
+      { message: string }?
+    ];
+  }
+}
+
 const authService = {
   Register,
   Login,
   Logout,
+  handleLocalAuth,
 };
 
 export default authService;
