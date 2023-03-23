@@ -2,7 +2,7 @@ import express from "express";
 import passport from "passport";
 import validateToken from "../middleware/validateToken.middleware";
 import authController from "../controllers/auth/authController";
-import ssoController from "src/controllers/sso/ssoController";
+import ssoController from "../controllers/sso/ssoController";
 
 const router = express.Router();
 const authRoutes = express.Router();

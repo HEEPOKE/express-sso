@@ -4,6 +4,8 @@ import passportConfig from "../config/passport";
 
 export default function server() {
   const app = express();
+
+  app.use(express.urlencoded({ extended: true }));
   passportConfig.configureMiddleware(app);
   passportConfig.configurePassport();
 

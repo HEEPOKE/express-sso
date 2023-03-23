@@ -11,10 +11,10 @@ import authService from "../services/auth/authServices";
 import ssoServices from "../services/sso/ssoServices";
 
 function configureMiddleware(app: any) {
-  app.use(cors({ credentials: true }));
+  app.use(cors({ credentials: false }));
   app.use(helmet());
   app.use(bodyParser.json());
-  app.use(app.urlencoded({ extended: false }));
+
   app.use(
     session({
       secret: config.SESSION_SECRET || "",
@@ -38,7 +38,10 @@ function configurePassport() {
         passwordField: "password",
       },
       async (email: string, password: string, done) => {
-        const [err, user, info] = await authService.handleLocalAuth(email, password);
+        const [err, user, info] = await authService.handleLocalAuth(
+          email,
+          password
+        );
         done(err, user, info);
       }
     )
