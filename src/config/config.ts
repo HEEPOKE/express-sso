@@ -4,6 +4,7 @@ dotenv.config();
 
 const {
   BASE_URL,
+  ENDPOINT_URL,
   PORT,
   MY_SECRET_KEY,
   MY_REFRESH_KEY,
@@ -14,6 +15,7 @@ const {
 
 const config = {
   BASE_URL,
+  ENDPOINT_URL,
   PORT,
   MY_SECRET_KEY,
   MY_REFRESH_KEY,
